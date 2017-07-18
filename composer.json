@@ -1,0 +1,37 @@
+{
+  "name"             : "makinecim/sdk-for-api",
+  "description"      : "Makinecim SDK for PHP",
+  "keywords"         : [
+    "makinecim",
+    "php",
+    "sdk"
+  ],
+  "homepage"         : "http://github.com/makinecim/makinecim-php-sdk",
+  "type"             : "library",
+  "require"          : {
+    "php": ">=5.5.0"
+  },
+  "support"          : {
+    "email" : "sdk@makinecim.com",
+    "issues": "http://github.com/makinecim/php-sdk/issues",
+    "source": "http://github.com/makinecim/php-sdk"
+  },
+  "license"          : "ISC",
+  "authors"          : [
+    {
+      "name"    : "Makinecim",
+      "homepage": "http://github.com/makinecim/makinecim-php-sdk/contributors"
+    }
+  ],
+  "autoload"         : {
+    "psr-4": {
+      "Makinecim\\": "src/Makinecim/"
+    }
+  },
+  "minimum-stability": "dev",
+  "require-dev"      : {
+    "larapack/dd"      : "dev-master",
+    "guzzlehttp/guzzle": "~6.0",
+    "vlucas/phpdotenv" : "^2.4.0"
+  }
+}
