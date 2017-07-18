@@ -1,7 +1,12 @@
 <?php namespace Makinecim;
 
+use Makinecim\Exceptions\MakinecimClientException;
+
 class Client
 {
+
+  const DEFAULT_ENV_NAME_FOR_CLIENT_NAME = "MAKINECIM_CLIENT_NAME";
+  const DEFAULT_ENV_NAME_FOR_CLIENT_SECRET = "MAKINECIM_CLIENT_SECRET";
 
   //  Api endpoint configs
   private $version = "v1";
@@ -12,15 +17,22 @@ class Client
   private $client_name;
   private $client_secret;
 
-  // API Configuration
-  private $config;
-
   public function __construct(array $config = [])
   {
-    $this->config = array_merge([
-      "client_name"   => env("MAKINECIM_CLIENT_NAME"),
-      "client_secret" => env("MAKINECIM_CLIENT_SECRET")
-    ], $config);
+    $config = [
+      "client_name"   => getenv(static::DEFAULT_ENV_NAME_FOR_CLIENT_NAME),
+      "client_secret" => getenv(static::DEFAULT_ENV_NAME_FOR_CLIENT_SECRET)
+    ];
+    if (isset($config["client_name"])) {
+      $this->setClientName($config["client_name"]);
+    }
+    if (isset($config["client_secret"])) {
+      $this->setClientSecret($config["client_secret"]);
+    }
+
+    if ($this->client_secret == "" || $this->client_name == "") {
+      throw new MakinecimClientException("Client configuration is not set! Please set config when you initialize the client!");
+    }
 
     return $this;
   }
