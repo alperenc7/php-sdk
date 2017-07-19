@@ -8,7 +8,10 @@ class Client
   const DEFAULT_ENV_NAME_FOR_CLIENT_NAME = "MAKINECIM_CLIENT_NAME";
   const DEFAULT_ENV_NAME_FOR_CLIENT_SECRET = "MAKINECIM_CLIENT_SECRET";
 
-  //  Api endpoint configs
+  /**
+   * @var string
+   * API endpoints for
+   */
   private $version = "v1";
   private $base = "http://makinecim.com/api";
   private $authURI = "login";
@@ -17,12 +20,31 @@ class Client
   private $client_name;
   private $client_secret;
 
+  /**
+   * @var int
+   * Cookie limetime for bearer token
+   * 1 Hour
+   */
+  private $cookieLifetime = 60 * 60;
+
+  /**
+   * @var string
+   * Cookie name for storing customer bearer token
+   */
+  private $cookieName = "MakinecimCustomerToken";
+
+  /**
+   * @var string
+   * Language for multilingual request
+   */
+  private $defaultLanguage = "tr";
+
   public function __construct(array $config = [])
   {
-    $config = [
+    $config = array_merge([
       "client_name"   => getenv(static::DEFAULT_ENV_NAME_FOR_CLIENT_NAME),
       "client_secret" => getenv(static::DEFAULT_ENV_NAME_FOR_CLIENT_SECRET)
-    ];
+    ], $config);
     if (isset($config["client_name"])) {
       $this->setClientName($config["client_name"]);
     }
@@ -30,8 +52,23 @@ class Client
       $this->setClientSecret($config["client_secret"]);
     }
 
+    /**
+     * If client doesnt give us credentials throw a new exception
+     */
     if ($this->client_secret == "" || $this->client_name == "") {
       throw new MakinecimClientException("Client configuration is not set! Please set config when you initialize the client!");
+    }
+
+    if (isset($config["cookie_lifetime"])) {
+      $this->setCookieLifetime(intval($config["cookie_lifetime"]));
+    }
+
+    if (isset($config["cookie_name"])) {
+      $this->setCookieName(trim($config["cookie_name"]));
+    }
+
+    if (isset($config["default_language"])) {
+      $this->setDefaultLanguage($config["default_language"]);
     }
 
     return $this;
@@ -60,10 +97,14 @@ class Client
 
   /**
    * @param string $base
+   *
+   * @return $this
    */
   public function setBase($base)
   {
     $this->base = $base;
+
+    return $this;
   }
 
   /**
@@ -76,10 +117,14 @@ class Client
 
   /**
    * @param string $version
+   *
+   * @return $this
    */
   public function setVersion($version)
   {
     $this->version = $version;
+
+    return $this;
   }
 
   /**
@@ -92,10 +137,14 @@ class Client
 
   /**
    * @param string $authURI
+   *
+   * @return $this
    */
   public function setAuthURI($authURI)
   {
     $this->authURI = $authURI;
+
+    return $this;
   }
 
   /**
@@ -108,10 +157,14 @@ class Client
 
   /**
    * @param mixed $client_secret
+   *
+   * @return $this
    */
   public function setClientSecret($client_secret)
   {
     $this->client_secret = $client_secret;
+
+    return $this;
   }
 
   /**
@@ -124,25 +177,73 @@ class Client
 
   /**
    * @param mixed $client_name
+   *
+   * @return $this
    */
   public function setClientName($client_name)
   {
     $this->client_name = $client_name;
+
+    return $this;
   }
 
   /**
-   * @return mixed
+   * @return int
    */
-  public function getConfig()
+  public function getCookieLifetime()
   {
-    return $this->config;
+    return $this->cookieLifetime;
   }
 
   /**
-   * @param mixed $config
+   * @param int $cookieLifetime
+   *
+   * @return $this
    */
-  public function setConfig($config)
+  public function setCookieLifetime($cookieLifetime)
   {
-    $this->config = $config;
+    $this->cookieLifetime = $cookieLifetime;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCookieName()
+  {
+    return $this->cookieName;
+  }
+
+  /**
+   * @param string $cookieName
+   *
+   * @return $this
+   */
+  public function setCookieName($cookieName)
+  {
+    $this->cookieName = $cookieName;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDefaultLanguage()
+  {
+    return $this->defaultLanguage;
+  }
+
+  /**
+   * @param string $defaultLanguage
+   *
+   * @return $this
+   */
+  public function setDefaultLanguage($defaultLanguage)
+  {
+    $this->defaultLanguage = $defaultLanguage;
+
+    return $this;
   }
 }

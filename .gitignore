@@ -2,5 +2,4 @@
 .env
 .DS_Store
 composer.lock
-test
 vendor
