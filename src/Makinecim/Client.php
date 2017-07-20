@@ -1,10 +1,12 @@
 <?php namespace Makinecim;
 
 use Makinecim\Exceptions\MakinecimClientException;
+use Makinecim\Exceptions\MakinecimResourceNotFoundException;
 
 class Client
 {
 
+  const USER_AGENT = "makinecim/php-sdk";
   const DEFAULT_ENV_NAME_FOR_CLIENT_NAME = "MAKINECIM_CLIENT_NAME";
   const DEFAULT_ENV_NAME_FOR_CLIENT_SECRET = "MAKINECIM_CLIENT_SECRET";
 
@@ -15,6 +17,7 @@ class Client
   private $version = "v1";
   private $base = "http://makinecim.com/api";
   private $authURI = "login";
+  private $currentVersion = "v1";
 
   //  Authentication parameters
   private $client_name;
@@ -74,6 +77,15 @@ class Client
     return $this;
   }
 
+  public function __get($name)
+  {
+    $endPointClass = "Makinecim\Resources\\" . ucfirst($name);
+    if (class_exists($endPointClass)) {
+      return new $endPointClass($this);
+    }
+    throw new MakinecimResourceNotFoundException;
+  }
+
   public function getAuthEndpoint()
   {
     return $this->getApiEndpoint($this->getAuthURI());
@@ -81,7 +93,10 @@ class Client
 
   public function getApiEndpoint($uri = NULL)
   {
-    $endpoint = $this->getBase() . "/" . $this->getVersion() . "/";
+    $endpoint = $this->getBase() . "/";
+    if ($this->currentVersion != $this->getVersion()) {
+      $endpoint .= $this->getVersion() . "/";
+    }
     $endpoint .= $uri ?: "";
 
     return $endpoint;
