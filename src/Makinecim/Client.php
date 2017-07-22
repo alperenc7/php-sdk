@@ -9,6 +9,8 @@ class Client
   const USER_AGENT = "makinecim/php-sdk";
   const DEFAULT_ENV_NAME_FOR_CLIENT_NAME = "MAKINECIM_CLIENT_NAME";
   const DEFAULT_ENV_NAME_FOR_CLIENT_SECRET = "MAKINECIM_CLIENT_SECRET";
+  const DEFAULT_ENV_NAME_FOR_CLIENT_DOMAIN = "MAKINECIM_CLIENT_DOMAIN";
+  const CLIENT_TOKEN_HEADER_NAME = "X-Makinecim-Token";
 
   /**
    * @var string
@@ -22,13 +24,14 @@ class Client
   //  Authentication parameters
   private $client_name;
   private $client_secret;
+  private $client_domain;
 
   /**
    * @var int
    * Cookie limetime for bearer token
    * 1 Hour
    */
-  private $cookieLifetime = 60 * 60;
+  private $cookieLifetime = 3600;
 
   /**
    * @var string
@@ -258,6 +261,29 @@ class Client
   public function setDefaultLanguage($defaultLanguage)
   {
     $this->defaultLanguage = $defaultLanguage;
+
+    return $this;
+  }
+
+  public function buildClientTokenHeader()
+  {
+    return base64_encode($this->client_name . "&" . $this->client_secret . "&" . $this->client_domain . "&makinecim");
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getClientDomain()
+  {
+    return $this->client_domain;
+  }
+
+  /**
+   * @param mixed $client_domain
+   */
+  public function setClientDomain($client_domain)
+  {
+    $this->client_domain = $client_domain;
 
     return $this;
   }

@@ -233,6 +233,7 @@ class Request
     if (!empty($params)) {
       $payload['query'] = $params;
     }
+    // dd($payload);
     // when sending multipart, specify our boundary and stream the data
     if ($this->getHeader('Content-Type') === 'multipart/form-data') {
       $payload = $this->prepareMultipartPayload($payload);
@@ -323,5 +324,12 @@ class Request
   public function getResponse()
   {
     return $this->response;
+  }
+
+  public function setQueryStringParams($params)
+  {
+    $this->params = $params;
+
+    return $this;
   }
 }
